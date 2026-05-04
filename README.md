@@ -1,63 +1,107 @@
-# Pi Thinking Hotkeys
+# pi-thinking-hotkeys
 
-Adds Codex CLI-style directional thinking/reasoning shortcuts to Pi:
+Codex-style directional thinking controls for [Pi](https://github.com/badlogic/pi-mono).
 
-- `Alt+,` decreases thinking effort
-- `Alt+.` increases thinking effort
+Pi already shows the active reasoning level next to the model, like `(openai-codex) gpt-5.5 • xhigh`. This extension adds the missing muscle-memory shortcuts without adding another footer/status item.
 
-The extension uses public Pi extension APIs only. It registers shortcuts with `pi.registerShortcut()`, reads the current level with `pi.getThinkingLevel()`, sets a requested level with `pi.setThinkingLevel()`, and reads the effective level back because Pi clamps requested levels to the active model's capabilities.
+| Shortcut | Action |
+|---|---|
+| `Alt+,` | Decrease thinking effort |
+| `Alt+.` | Increase thinking effort |
 
-## Develop
+## Installation
 
-```bash
-cd /Users/colin/workspace/pi-thinking-hotkeys
-npm install
-npm run check
-pi -e ./index.ts
-```
-
-Inside Pi, run `/help` and confirm the extension shortcuts appear under Extensions.
-
-## Install globally
+From git:
 
 ```bash
-mkdir -p ~/.pi/agent/extensions/pi-thinking-hotkeys
-cp /Users/colin/workspace/pi-thinking-hotkeys/index.ts ~/.pi/agent/extensions/pi-thinking-hotkeys/index.ts
-cp /Users/colin/workspace/pi-thinking-hotkeys/thinking-levels.ts ~/.pi/agent/extensions/pi-thinking-hotkeys/thinking-levels.ts
+pi install git:github.com/masonc15/pi-thinking-hotkeys
 ```
 
-Then start Pi normally.
+From a local checkout:
 
-## Terminal caveat
+```bash
+pi install /Users/colin/workspace/pi-thinking-hotkeys
+```
 
-`Alt+,` and `Alt+.` work when the terminal sends Kitty keyboard protocol or xterm `modifyOtherKeys` sequences. Some legacy terminals send raw `ESC ,` or `ESC .`; current Pi TUI does not parse those as `alt+,` or `alt+.`. Run this diagnostic:
+To try it for one Pi run without installing:
+
+```bash
+pi -e /Users/colin/workspace/pi-thinking-hotkeys
+```
+
+If you previously copied the extension manually to `~/.pi/agent/extensions/pi-thinking-hotkeys`, remove that copy before installing as a package to avoid duplicate shortcut registrations.
+
+## Usage
+
+Start Pi and press the shortcuts while the editor is focused.
+
+- `Alt+.` moves upward: `off → minimal → low → medium → high → xhigh`
+- `Alt+,` moves downward: `xhigh → high → medium → low → minimal → off`
+- Unsupported model levels are skipped.
+- At the minimum or maximum, the shortcut is a no-op and Pi shows a short notification.
+- Non-reasoning models stay at `off`.
+
+Use `/help` in Pi to confirm the shortcuts are loaded under Extensions.
+
+## How it works
+
+The extension uses public Pi APIs only:
+
+- `pi.registerShortcut()` registers `Alt+,` and `Alt+.`.
+- `pi.getThinkingLevel()` reads the current level.
+- `pi.setThinkingLevel()` requests the next level.
+
+Pi clamps requested thinking levels to the active model's capabilities. After setting a level, the extension reads the effective level back and reports if Pi clamped it.
+
+The extension does not write to the footer/statusline. Pi's built-in model display already shows the active reasoning level.
+
+## Terminal support
+
+`Alt+,` and `Alt+.` work when your terminal sends Kitty keyboard protocol or xterm `modifyOtherKeys` sequences. Pi enables those protocols on startup when the terminal supports them.
+
+Some terminals or tmux setups send raw legacy sequences instead:
+
+```text
+ESC ,
+ESC .
+```
+
+Current Pi TUI does not parse those as `alt+,` or `alt+.`. That limitation is in Pi's key parser, not this extension.
+
+Check what Pi's key parser supports locally:
 
 ```bash
 npm run check:keys
 ```
 
-If the diagnostic shows legacy `ESC` symbol sequences failing, the fix belongs in `@mariozechner/pi-tui`, not in this extension.
-
-## Manual terminal check
-
-Run this outside Pi:
+For a real terminal check, run:
 
 ```bash
 cat -v
 ```
 
-Press `Alt+,` and `Alt+.`.
+Then press `Alt+,` and `Alt+.`. If you see `^[,` or `^[.`, your terminal is sending legacy ESC-symbol input.
 
-If you see `^[,` or `^[.`, your terminal is sending raw legacy ESC-symbol sequences. Current Pi TUI does not parse those as `alt+,` or `alt+.`.
+## Development
 
-If you see sequences like `^[[27;3;44~`, `^[[27;3;46~`, `^[[44;3u`, or `^[[46;3u`, Pi should parse the shortcuts.
-
-## Installed copy
-
-The validated source files can be copied to:
-
-```text
-~/.pi/agent/extensions/pi-thinking-hotkeys/
+```bash
+npm install
+npm run check
+npm run check:keys
+pi --no-extensions -e .
 ```
 
-Pi auto-discovers the extension from that directory. After updating the source repo, copy `index.ts` and `thinking-levels.ts` again.
+The package is installable by Pi because `package.json` includes:
+
+```json
+{
+  "keywords": ["pi-package"],
+  "pi": {
+    "extensions": ["./index.ts"]
+  }
+}
+```
+
+## License
+
+MIT

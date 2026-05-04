@@ -1,15 +1,47 @@
 {
 	"name": "pi-thinking-hotkeys",
 	"version": "0.1.0",
-	"private": true,
+	"description": "Pi extension for Codex-style directional thinking effort hotkeys",
 	"type": "module",
-	"description": "Pi extension for Codex-style thinking effort hotkeys",
 	"main": "index.ts",
+	"license": "MIT",
+	"author": "Colin Mason",
+	"homepage": "https://github.com/masonc15/pi-thinking-hotkeys#readme",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/masonc15/pi-thinking-hotkeys"
+	},
+	"keywords": [
+		"pi-package",
+		"pi-extension",
+		"pi",
+		"thinking",
+		"reasoning",
+		"hotkeys",
+		"codex"
+	],
+	"files": [
+		"index.ts",
+		"thinking-levels.ts",
+		"README.md",
+		"LICENSE"
+	],
+	"pi": {
+		"extensions": ["./index.ts"]
+	},
 	"scripts": {
 		"test": "vitest run",
 		"typecheck": "tsc --noEmit",
 		"check": "npm run typecheck && npm test",
 		"check:keys": "node scripts/check-alt-symbols.mjs"
+	},
+	"peerDependencies": {
+		"@mariozechner/pi-coding-agent": "*"
+	},
+	"peerDependenciesMeta": {
+		"@mariozechner/pi-coding-agent": {
+			"optional": true
+		}
 	},
 	"devDependencies": {
 		"@mariozechner/pi-coding-agent": "^0.72.1",
