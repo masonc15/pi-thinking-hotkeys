@@ -9,7 +9,7 @@
 	"homepage": "https://github.com/masonc15/pi-thinking-hotkeys#readme",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/masonc15/pi-thinking-hotkeys"
+		"url": "git+https://github.com/masonc15/pi-thinking-hotkeys.git"
 	},
 	"keywords": [
 		"pi-package",
@@ -27,7 +27,9 @@
 		"LICENSE"
 	],
 	"pi": {
-		"extensions": ["./index.ts"]
+		"extensions": [
+			"./index.ts"
+		]
 	},
 	"scripts": {
 		"test": "vitest run",
