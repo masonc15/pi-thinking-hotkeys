@@ -7,7 +7,8 @@ Codex-style directional hotkeys for changing [pi](https://github.com/badlogic/pi
 | `Alt+,` | Decrease thinking effort |
 | `Alt+.` | Increase thinking effort |
 
-On macOS, `Alt` is the `Option` (⌥) key.
+> [!NOTE]
+> On macOS, `Alt` is the `Option` (⌥) key.
 
 ## Install
 
