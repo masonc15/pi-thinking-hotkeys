@@ -2,7 +2,7 @@
 
 Codex-style directional thinking controls for [Pi](https://github.com/badlogic/pi-mono).
 
-Pi already shows the active reasoning level next to the model, like `(openai-codex) gpt-5.5 • xhigh`. This extension adds the missing muscle-memory shortcuts without adding another footer/status item.
+Adds the missing muscle-memory shortcuts for changing Pi's active reasoning level.
 
 | Shortcut | Action |
 |---|---|
@@ -53,7 +53,7 @@ The extension uses public Pi APIs only:
 
 Pi clamps requested thinking levels to the active model's capabilities. After setting a level, the extension reads the effective level back and reports if Pi clamped it.
 
-The extension does not write to the footer/statusline. Pi's built-in model display already shows the active reasoning level.
+Pi's built-in model display continues to show the active reasoning level.
 
 ## Terminal support
 
