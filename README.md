@@ -13,6 +13,12 @@ Codex-style directional hotkeys for changing [pi](https://github.com/badlogic/pi
 ## Install
 
 ```bash
+pi install npm:pi-thinking-hotkeys
+```
+
+Or from git:
+
+```bash
 pi install git:github.com/masonc15/pi-thinking-hotkeys
 ```
 
