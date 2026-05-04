@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { stepThinkingForTest, type MinimalThinkingContext, type MinimalPiApi } from "./index.js";
+import thinkingHotkeysExtension, { stepThinkingForTest, type MinimalThinkingContext, type MinimalPiApi } from "./index.js";
 import {
 	THINKING_LEVELS,
 	isThinkingLevel,
@@ -266,5 +266,30 @@ describe("extension step handler", () => {
 		expect(context.notifications.at(-1)?.message).toBe(
 			"Thinking shortcuts are unavailable until a model is selected.",
 		);
+	});
+});
+
+describe("extension registration", () => {
+	it("registers the Codex-style Alt comma and Alt period shortcuts", () => {
+		const shortcuts: Array<{ shortcut: string; description: string }> = [];
+		const events: string[] = [];
+		const fakePi = {
+			registerShortcut: (shortcut: string, options: { description: string }) => {
+				shortcuts.push({ shortcut, description: options.description });
+			},
+			on: (event: string) => {
+				events.push(event);
+			},
+			getThinkingLevel: () => "off",
+			setThinkingLevel: () => undefined,
+		};
+
+		thinkingHotkeysExtension(fakePi as never);
+
+		expect(shortcuts).toEqual([
+			{ shortcut: "alt+,", description: "Decrease thinking level" },
+			{ shortcut: "alt+.", description: "Increase thinking level" },
+		]);
+		expect(events).toEqual(["thinking_level_select", "model_select", "session_start"]);
 	});
 });
