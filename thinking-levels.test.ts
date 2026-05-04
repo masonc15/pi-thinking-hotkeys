@@ -107,8 +107,8 @@ describe("thinking level helpers", () => {
 describe("extension step handler", () => {
 	function createContext(model: unknown, idle = true) {
 		const notifications: Array<{ message: string; type?: "info" | "warning" | "error" }> = [];
-		const statuses: Record<string, string | undefined> = {};
-		const ctx: MinimalThinkingContext = {
+		const statusCalls: Array<{ id: string; text: string | undefined }> = [];
+		const ctx = {
 			model,
 			isIdle: () => idle,
 			ui: {
@@ -116,11 +116,11 @@ describe("extension step handler", () => {
 					notifications.push(type === undefined ? { message } : { message, type });
 				},
 				setStatus: (id: string, text: string | undefined) => {
-					statuses[id] = text;
+					statusCalls.push({ id, text });
 				},
 			},
-		};
-		return { notifications, statuses, ctx };
+		} as MinimalThinkingContext;
+		return { notifications, statusCalls, ctx };
 	}
 
 	function createPi(initial: string, clamp?: (level: ThinkingLevel) => ThinkingLevel) {
@@ -143,7 +143,7 @@ describe("extension step handler", () => {
 		await stepThinkingForTest(runtime.pi, context.ctx, "up");
 
 		expect(runtime.calls).toEqual(["medium"]);
-		expect(context.statuses["thinking-hotkeys"]).toBe("thinking: medium");
+		expect(context.statusCalls).toEqual([]);
 		expect(context.notifications.at(-1)?.message).toBe("Thinking level: medium.");
 	});
 
@@ -154,7 +154,7 @@ describe("extension step handler", () => {
 		await stepThinkingForTest(runtime.pi, context.ctx, "down");
 
 		expect(runtime.calls).toEqual(["medium"]);
-		expect(context.statuses["thinking-hotkeys"]).toBe("thinking: medium");
+		expect(context.statusCalls).toEqual([]);
 	});
 
 	it("does not wrap at the minimum", async () => {
@@ -193,7 +193,7 @@ describe("extension step handler", () => {
 		await stepThinkingForTest(runtime.pi, context.ctx, "up");
 
 		expect(runtime.calls).toEqual(["high"]);
-		expect(context.statuses["thinking-hotkeys"]).toBe("thinking: high");
+		expect(context.statusCalls).toEqual([]);
 	});
 
 	it("moves unsupported current levels in the requested direction", async () => {
@@ -290,6 +290,6 @@ describe("extension registration", () => {
 			{ shortcut: "alt+,", description: "Decrease thinking level" },
 			{ shortcut: "alt+.", description: "Increase thinking level" },
 		]);
-		expect(events).toEqual(["thinking_level_select", "model_select", "session_start"]);
+		expect(events).toEqual([]);
 	});
 });
